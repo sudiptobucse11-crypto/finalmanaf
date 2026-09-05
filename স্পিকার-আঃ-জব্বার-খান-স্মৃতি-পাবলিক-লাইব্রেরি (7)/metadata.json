@@ -1,0 +1,6 @@
+{
+  "name": "স্পিকার আঃ জব্বার খান স্মৃতি পাবলিক লাইব্রেরি",
+  "description": "ডিজিটাল লাইব্রেরি ম্যানেজমেন্ট সিস্টেম — স্পিকার আঃ জব্বার খান স্মৃতি পাবলিক লাইব্রেরি, ভূতেরদিয়া, বাবুগঞ্জ, বরিশাল।",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
