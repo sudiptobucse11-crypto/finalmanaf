@@ -191,7 +191,7 @@ export const LibraryAdminDashboard: React.FC = () => {
     setPublicationYear(b.publicationYear);
     setEdition(b.edition);
     setLanguage(b.language);
-    setCoverUrl(b.coverUrl);
+    setCoverUrl(b.coverUrl || b.coverImage || '');
     setQuantity(b.quantity);
     setShelfNumber(b.shelfNumber);
     setIsbn(b.isbn);
@@ -220,6 +220,7 @@ export const LibraryAdminDashboard: React.FC = () => {
         edition,
         language,
         coverUrl: defaultCover,
+        coverImage: defaultCover,
         quantity,
         availableCopies: Math.min(quantity, editingBook.availableCopies),
         shelfNumber,
@@ -248,6 +249,7 @@ export const LibraryAdminDashboard: React.FC = () => {
         edition,
         language,
         coverUrl: defaultCover,
+        coverImage: defaultCover,
         quantity,
         availableCopies: quantity,
         shelfNumber,
@@ -1976,7 +1978,7 @@ export const LibraryAdminDashboard: React.FC = () => {
             {donors.map(d => (
               <div key={d.id} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-xs flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3 overflow-hidden">
-                  <img src={d.photoUrl} alt={d.name} className="w-12 h-12 rounded-full object-cover border-2 border-emerald-600 shrink-0" />
+                  <SafeImage src={d.photoUrl} alt={d.name} category="avatar" className="w-12 h-12 rounded-full object-cover border-2 border-emerald-600 shrink-0" />
                   <div className="text-xs overflow-hidden">
                     <h3 className="font-bold text-slate-900 dark:text-white truncate">{d.name}</h3>
                     <p className="text-[11px] text-emerald-600 font-medium truncate">{d.designation}</p>
@@ -2061,7 +2063,7 @@ export const LibraryAdminDashboard: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {gallery.map(g => (
               <div key={g.id} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xs relative group">
-                <img src={g.imageUrl} alt={g.title} className="w-full h-36 object-cover" />
+                <SafeImage src={g.imageUrl} alt={g.title} category="gallery" className="w-full h-36 object-cover" />
                 <div className="p-3 text-xs flex justify-between items-center">
                   <span className="font-bold truncate text-slate-900 dark:text-white">{g.title}</span>
                   <div className="flex items-center gap-1 shrink-0">

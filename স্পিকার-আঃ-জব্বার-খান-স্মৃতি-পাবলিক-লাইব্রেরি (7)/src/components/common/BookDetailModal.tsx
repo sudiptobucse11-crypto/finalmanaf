@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Book } from '../../types';
 import { X, Bookmark, BookOpen, CheckCircle, AlertCircle, Share2, Layers, MapPin, Hash, BarChart3 } from 'lucide-react';
 import { BarcodeGenerator, QRCodeVisual } from './QRCodeCanvas';
+import { SafeImage } from './SafeImage';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from './Toast';
 import { storage } from '../../lib/storage';
@@ -75,9 +76,10 @@ export const BookDetailModal: React.FC<BookDetailModalProps> = ({ book, onClose,
           {/* Left Column: Cover & Barcode */}
           <div className="space-y-4 text-center">
             <div className="aspect-3/4 bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden shadow-md border border-slate-200 dark:border-slate-700">
-              <img
-                src={book.coverUrl}
+              <SafeImage
+                src={book.coverUrl || book.coverImage}
                 alt={book.title}
+                category="book_cover"
                 className="w-full h-full object-cover"
               />
             </div>

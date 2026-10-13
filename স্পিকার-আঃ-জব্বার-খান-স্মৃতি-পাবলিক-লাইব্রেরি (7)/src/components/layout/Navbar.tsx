@@ -99,10 +99,13 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
           className="flex items-center gap-3.5 text-left group focus:outline-hidden"
         >
           <div 
-            style={{ width: '40px', height: '40px', background: 'var(--accent)', borderRadius: '10px' }} 
-            className="shrink-0 flex items-center justify-center shadow-xs transition-transform group-hover:scale-105"
+            className="w-10 h-10 sm:w-11 sm:h-11 shrink-0 rounded-full overflow-hidden border-2 border-[#E85D75] shadow-xs transition-transform group-hover:scale-105 bg-white flex items-center justify-center p-0.5"
           >
-            <BookOpen className="w-5 h-5 text-white" />
+            <img 
+              src="/logo.png" 
+              alt="স্পিকার আঃ জব্বার খান স্মৃতি লাইব্রেরি লোগো" 
+              className="w-full h-full object-cover rounded-full" 
+            />
           </div>
           <div>
             <h1 className="font-serif text-base sm:text-lg lg:text-xl font-bold tracking-tight text-[#2D2424] dark:text-[#FFF9F0] group-hover:text-[#E85D75] transition-colors leading-tight">

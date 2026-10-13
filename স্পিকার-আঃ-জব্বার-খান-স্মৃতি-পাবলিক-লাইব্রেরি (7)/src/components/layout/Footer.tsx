@@ -19,10 +19,13 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <div 
-                style={{ background: 'var(--accent)', borderRadius: '10px' }}
-                className="w-10 h-10 flex items-center justify-center shrink-0 shadow-xs"
+                className="w-11 h-11 rounded-full overflow-hidden border-2 border-[#F4D35E] shrink-0 shadow-xs bg-white flex items-center justify-center p-0.5"
               >
-                <BookOpen className="w-5 h-5 text-white" />
+                <img 
+                  src="/logo.png" 
+                  alt="স্পিকার আঃ জব্বার খান স্মৃতি লাইব্রেরি লোগো" 
+                  className="w-full h-full object-cover rounded-full" 
+                />
               </div>
               <div>
                 <h3 className="text-sm sm:text-base font-bold font-serif text-white leading-tight">

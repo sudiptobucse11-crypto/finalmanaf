@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { User, UserRole } from '../../types';
 import { storage, mockHashPassword, logActivity } from '../../lib/storage';
 import { RoleBadge } from '../../components/common/Badge';
+import { SafeImage } from '../../components/common/SafeImage';
 import { useToast } from '../../components/common/Toast';
 import { useAuth } from '../../context/AuthContext';
 import { ChangePasswordModal } from '../../components/common/ChangePasswordModal';
@@ -482,7 +483,7 @@ export const SuperAdminDashboard: React.FC = () => {
                       <div className="flex items-center gap-2.5">
                         <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-xs text-slate-700 dark:text-slate-300 shrink-0">
                           {u.avatarUrl ? (
-                            <img src={u.avatarUrl} alt={u.fullName} className="w-full h-full object-cover rounded-xl" />
+                            <SafeImage src={u.avatarUrl} alt={u.fullName} category="avatar" className="w-full h-full object-cover rounded-xl" />
                           ) : (
                             u.fullName.charAt(0)
                           )}

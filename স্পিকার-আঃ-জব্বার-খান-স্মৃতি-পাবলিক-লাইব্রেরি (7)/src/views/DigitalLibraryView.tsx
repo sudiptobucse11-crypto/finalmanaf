@@ -3,6 +3,7 @@ import { DigitalBook, BookCategory } from '../types';
 import { storage } from '../lib/storage';
 import { Search, Download, BookOpen, Eye, X, ZoomIn, ZoomOut, Bookmark, FileText, ChevronLeft, ChevronRight, Share2 } from 'lucide-react';
 import { useToast } from '../components/common/Toast';
+import { SafeImage } from '../components/common/SafeImage';
 
 export const DigitalLibraryView: React.FC = () => {
   const { showToast } = useToast();
@@ -105,9 +106,10 @@ export const DigitalLibraryView: React.FC = () => {
             className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between space-y-4"
           >
             <div className="flex gap-4">
-              <img
+              <SafeImage
                 src={book.coverUrl}
                 alt={book.title}
+                category="book_cover"
                 className="w-20 h-28 object-cover rounded-xl shadow-xs border shrink-0"
               />
               <div className="space-y-1">

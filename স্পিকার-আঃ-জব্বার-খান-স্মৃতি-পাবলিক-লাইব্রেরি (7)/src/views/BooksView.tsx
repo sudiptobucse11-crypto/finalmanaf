@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Book, BookCategory, ViewName } from '../types';
 import { storage } from '../lib/storage';
 import { BookCard } from '../components/common/BookCard';
+import { SafeImage } from '../components/common/SafeImage';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../components/common/Toast';
 import { Search, Filter, RefreshCw, LayoutGrid, List, Check, BookOpen } from 'lucide-react';
@@ -268,9 +269,10 @@ export const BooksView: React.FC<BooksViewProps> = ({ onSelectBook, onNavigate }
               className="p-4 hover:bg-emerald-50/50 dark:hover:bg-slate-800/50 transition-colors flex items-center justify-between gap-4 cursor-pointer"
             >
               <div className="flex items-center gap-4">
-                <img
-                  src={book.coverUrl}
+                <SafeImage
+                  src={book.coverUrl || book.coverImage}
                   alt={book.title}
+                  category="book_cover"
                   className="w-12 h-16 object-cover rounded-md border shrink-0"
                 />
                 <div>

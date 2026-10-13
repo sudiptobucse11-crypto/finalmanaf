@@ -14,6 +14,38 @@ interface ImageInputPickerProps {
   className?: string;
 }
 
+// Client-side image compressor: keeps image quality high while resizing to fast-loading size
+const compressImage = (dataUrl: string, maxWidth = 800, maxHeight = 1000, quality = 0.85): Promise<string> => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      let width = img.width;
+      let height = img.height;
+      if (width > maxWidth || height > maxHeight) {
+        if (width / height > maxWidth / maxHeight) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        } else {
+          width = Math.round((width * maxHeight) / height);
+          height = maxHeight;
+        }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        resolve(dataUrl);
+        return;
+      }
+      ctx.drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = () => resolve(dataUrl);
+    img.src = dataUrl;
+  });
+};
+
 export const ImageInputPicker: React.FC<ImageInputPickerProps> = ({
   value,
   onChange,
@@ -64,17 +96,27 @@ export const ImageInputPicker: React.FC<ImageInputPickerProps> = ({
     }
 
     const reader = new FileReader();
-    reader.onload = (evt) => {
+    reader.onload = async (evt) => {
       const result = evt.target?.result as string;
       if (result) {
         setFileName(file.name);
-        // Automatically save to central media library to prevent duplicates & assign single ID
-        const savedMedia = storage.saveMediaItem({
-          title: file.name.replace(/\.[^/.]+$/, ''),
-          category: category as ImageCategory,
-          url: result
-        });
-        onChange(savedMedia.id);
+        try {
+          // Compress image to ensure fast loading and prevent localStorage overflow
+          const compressed = await compressImage(result, 800, 1000, 0.85);
+          storage.saveMediaItem({
+            title: file.name.replace(/\.[^/.]+$/, ''),
+            category: category as ImageCategory,
+            url: compressed
+          });
+          onChange(compressed);
+        } catch {
+          storage.saveMediaItem({
+            title: file.name.replace(/\.[^/.]+$/, ''),
+            category: category as ImageCategory,
+            url: result
+          });
+          onChange(result);
+        }
       }
     };
     reader.onerror = () => {
@@ -88,13 +130,12 @@ export const ImageInputPicker: React.FC<ImageInputPickerProps> = ({
     setUploadError(null);
     const clean = newUrl.trim();
     if (clean) {
-      // Save or find in media library
-      const savedMedia = storage.saveMediaItem({
+      storage.saveMediaItem({
         title: `ইমেজ লিংক (${category})`,
         category: category as ImageCategory,
         url: clean
       });
-      onChange(savedMedia.id);
+      onChange(clean);
     } else {
       onChange('');
     }
@@ -120,14 +161,19 @@ export const ImageInputPicker: React.FC<ImageInputPickerProps> = ({
     }
   };
 
-  const handleCropComplete = (croppedBase64: string) => {
-    // Save cropped version in Central Media Database
-    const savedMedia = storage.saveMediaItem({
+  const handleCropComplete = async (croppedBase64: string) => {
+    let finalCropped = croppedBase64;
+    try {
+      finalCropped = await compressImage(croppedBase64, 800, 1000, 0.85);
+    } catch {
+      // fallback to original cropped
+    }
+    storage.saveMediaItem({
       title: `ক্রপকৃত ছবি (${category})`,
       category: category as ImageCategory,
-      url: croppedBase64
+      url: finalCropped
     });
-    onChange(savedMedia.id);
+    onChange(finalCropped);
   };
 
   // Class for image preview ratio
@@ -271,7 +317,7 @@ export const ImageInputPicker: React.FC<ImageInputPickerProps> = ({
               <button
                 key={m.id}
                 type="button"
-                onClick={() => onChange(m.id)}
+                onClick={() => onChange(m.url)}
                 className={`relative group rounded-lg overflow-hidden border aspect-square ${
                   value === m.id || value === m.url
                     ? 'border-2 border-emerald-600 ring-2 ring-emerald-500/50'

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ViewName, Book, UserRole } from './types';
+import { storage } from './lib/storage';
 import { LanguageProvider } from './context/LanguageContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -35,6 +36,10 @@ const AppContent: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewName>('home');
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const { user } = useAuth();
+
+  useEffect(() => {
+    storage.syncWithServer();
+  }, []);
 
   // Navigation handler guaranteed to be a valid function
   const handleNavigate = (view: ViewName) => {

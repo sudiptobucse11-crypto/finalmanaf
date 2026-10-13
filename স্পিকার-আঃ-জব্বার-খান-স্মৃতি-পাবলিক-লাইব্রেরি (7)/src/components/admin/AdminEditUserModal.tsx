@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { User, UserRole } from '../../types';
 import { storage, mockHashPassword, logActivity } from '../../lib/storage';
+import { SafeImage } from '../common/SafeImage';
 import { useToast } from '../common/Toast';
 import { 
   X, 
@@ -101,7 +102,7 @@ export const AdminEditUserModal: React.FC<AdminEditUserModalProps> = ({ user, on
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-bold text-lg border border-emerald-300 dark:border-emerald-800">
               {user.avatarUrl ? (
-                <img src={user.avatarUrl} alt={user.fullName} className="w-full h-full object-cover rounded-2xl" />
+                <SafeImage src={user.avatarUrl} alt={user.fullName} category="avatar" className="w-full h-full object-cover rounded-2xl" />
               ) : (
                 user.fullName.charAt(0)
               )}

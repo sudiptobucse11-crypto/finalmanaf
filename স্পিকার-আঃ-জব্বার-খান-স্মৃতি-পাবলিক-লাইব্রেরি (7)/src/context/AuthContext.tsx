@@ -23,6 +23,14 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+export const generateMemberAvatar = (name: string): string => {
+  const initial = (name.trim().charAt(0) || 'স').toUpperCase();
+  const colors = ['%23047857', '%230d9488', '%230284c7', '%234f46e5', '%237c3aed', '%23b91c1c', '%23c2410c'];
+  const colorIndex = (name.charCodeAt(0) || 0) % colors.length;
+  const bg = colors[colorIndex];
+  return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" rx="40" fill="${bg}"/><text x="50%" y="54%" font-family="sans-serif" font-size="80" font-weight="bold" fill="%23ffffff" text-anchor="middle" dominant-baseline="middle">${encodeURIComponent(initial)}</text></svg>`;
+};
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(() => storage.getCurrentUserSession());
 
@@ -174,7 +182,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       memberId: newMemberId,
       createdAt: new Date().toISOString().split('T')[0],
       status: 'active',
-      avatarUrl: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(fullName)}`
+      avatarUrl: generateMemberAvatar(fullName)
     };
 
     storage.addUser(newUser);

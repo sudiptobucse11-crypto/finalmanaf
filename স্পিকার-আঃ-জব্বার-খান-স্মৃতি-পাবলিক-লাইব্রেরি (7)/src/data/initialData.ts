@@ -23,8 +23,8 @@ export const INITIAL_MEDIA_LIBRARY: MediaItem[] = [
     id: 'img_logo_main',
     title: 'লাইব্রেরি অফিসিয়াল লোগো (Main Logo)',
     category: 'logo',
-    url: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&q=80&w=300',
-    dimensions: '300x300',
+    url: '/logo.png',
+    dimensions: '1024x1024',
     createdAt: '2001-01-01',
     updatedAt: '2026-08-01',
     referenceCount: 15

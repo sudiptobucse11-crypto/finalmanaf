@@ -103,6 +103,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ initialMode = 'login', onN
             /* LOGIN FORM */
             <form onSubmit={handleLoginSubmit} className="space-y-4">
               <div className="text-center mb-6">
+                <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#E85D75] mx-auto mb-2 shadow-xs bg-white flex items-center justify-center p-0.5">
+                  <img src="/logo.png" alt="লোগো" className="w-full h-full object-cover rounded-full" />
+                </div>
                 <h2 className="text-lg font-bold text-slate-900 dark:text-white">
                   লাইব্রেরি পোর্টালে লগইন করুন
                 </h2>
@@ -177,6 +180,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ initialMode = 'login', onN
             /* REGISTER FORM */
             <form onSubmit={handleRegisterSubmit} className="space-y-3.5">
               <div className="text-center mb-4">
+                <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#E85D75] mx-auto mb-2 shadow-xs bg-white flex items-center justify-center p-0.5">
+                  <img src="/logo.png" alt="লোগো" className="w-full h-full object-cover rounded-full" />
+                </div>
                 <h2 className="text-lg font-bold text-slate-900 dark:text-white">
                   নতুন সদস্য হিসেবে যোগ দিন
                 </h2>

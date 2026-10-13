@@ -74,9 +74,30 @@ function getStoredItem<T>(key: string, defaultVal: T): T {
   }
 }
 
+let syncChannel: BroadcastChannel | null = null;
+try {
+  if (typeof window !== 'undefined' && typeof BroadcastChannel !== 'undefined') {
+    syncChannel = new BroadcastChannel('sajkspla_sync_channel');
+    syncChannel.onmessage = (event) => {
+      if (event.data?.type === 'DATA_UPDATED') {
+        window.dispatchEvent(new CustomEvent('sajks_media_updated', { detail: { timestamp: Date.now() } }));
+      }
+    };
+  }
+} catch {
+  // Ignore BroadcastChannel errors
+}
+
 function setStoredItem<T>(key: string, val: T): void {
   try {
     localStorage.setItem(key, JSON.stringify(val));
+    if (syncChannel) {
+      try {
+        syncChannel.postMessage({ type: 'DATA_UPDATED', key });
+      } catch {
+        // Ignore channel message error
+      }
+    }
   } catch (err) {
     console.error(`Error writing ${key} to storage`, err);
   }
@@ -525,6 +546,84 @@ export const storage = {
       `"${(l.details || '').replace(/"/g, '""')}"`
     ]);
     return [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  },
+
+  // FULL DATABASE EXPORT & IMPORT (Cross-Device Sync Support)
+  exportFullDatabase: (): string => {
+    const data = {
+      app: 'sajkspla_library',
+      version: '1.0',
+      exportedAt: new Date().toISOString(),
+      users: storage.getUsers(),
+      books: storage.getBooks(),
+      digitalBooks: storage.getDigitalBooks(),
+      notices: storage.getNotices(),
+      events: storage.getEvents(),
+      gallery: storage.getGallery(),
+      donors: storage.getDonors(),
+      borrowRecords: storage.getBorrowRecords(),
+      reservations: storage.getReservations(),
+      fines: storage.getFines(),
+      siteInfo: storage.getSiteInfo(),
+      milestones: storage.getMilestones(),
+      mediaLibrary: storage.getMediaLibrary()
+    };
+    return JSON.stringify(data, null, 2);
+  },
+
+  importFullDatabase: (jsonStr: string): boolean => {
+    try {
+      const data = typeof jsonStr === 'string' ? JSON.parse(jsonStr) : jsonStr;
+      if (!data) return false;
+      if (Array.isArray(data.users)) setStoredItem(KEYS.USERS, data.users);
+      if (Array.isArray(data.books)) setStoredItem(KEYS.BOOKS, data.books);
+      if (Array.isArray(data.digitalBooks)) setStoredItem(KEYS.DIGITAL_BOOKS, data.digitalBooks);
+      if (Array.isArray(data.notices)) setStoredItem(KEYS.NOTICES, data.notices);
+      if (Array.isArray(data.events)) setStoredItem(KEYS.EVENTS, data.events);
+      if (Array.isArray(data.gallery)) setStoredItem(KEYS.GALLERY, data.gallery);
+      if (Array.isArray(data.donors)) setStoredItem(KEYS.DONORS, data.donors);
+      if (Array.isArray(data.borrowRecords)) setStoredItem(KEYS.BORROW_RECORDS, data.borrowRecords);
+      if (Array.isArray(data.reservations)) setStoredItem(KEYS.RESERVATIONS, data.reservations);
+      if (Array.isArray(data.fines)) setStoredItem(KEYS.FINES, data.fines);
+      if (data.siteInfo && typeof data.siteInfo === 'object') setStoredItem(KEYS.SITE_INFO, data.siteInfo);
+      if (Array.isArray(data.milestones)) setStoredItem(KEYS.MILESTONES, data.milestones);
+      if (Array.isArray(data.mediaLibrary)) setStoredItem(KEYS.MEDIA_LIBRARY, data.mediaLibrary);
+      storage.notifyMediaUpdate();
+      return true;
+    } catch (err) {
+      console.error('Failed to import database:', err);
+      return false;
+    }
+  },
+
+  // Optional backend API sync for persistent cross-device syncing
+  syncWithServer: async (): Promise<boolean> => {
+    try {
+      const res = await fetch('/api/db');
+      if (res.ok) {
+        const serverData = await res.json();
+        if (serverData && serverData.books && serverData.books.length > 0) {
+          return storage.importFullDatabase(serverData);
+        }
+      }
+    } catch {
+      // Server not reachable; client-side localStorage remains active
+    }
+    return false;
+  },
+
+  pushToServer: async (): Promise<boolean> => {
+    try {
+      const payload = storage.exportFullDatabase();
+      const res = await fetch('/api/db', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload
+      });
+      return res.ok;
+    } catch {
+      return false;
+    }
   }
 };
 
